@@ -13,7 +13,7 @@ fluidPage(title='Trade-off Model',
                    column(3,h4('by Elena Villalobos Nolasco',style="color: #6F6F6F")),
                    column(3,h5('E-mail:',a(href='villaele14@gmail.com','villaele14@gmail.com'),style="color: #6F6F6F")),
                    column(3,h5('Git:',a(href='https://github.com/VillanoEle','github.com/VillanoEle'),style="color: #6F6F6F")),
-                   column(3,h5('Webpage:',a(href='https://sites.google.com/site/adaptabilidad25/home','Lab25.'),style="color: #6F6F6F"))),
+                   column(3,h5('Labwebpage:',a(href='https://bouzaslab25.github.io/','Lab25.'),style="color: #6F6F6F"))),
    fluidRow(
    column(3,
  wellPanel(
