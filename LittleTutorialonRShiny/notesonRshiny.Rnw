@@ -1,0 +1,382 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt, oneside]{article}     % use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                  	% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps???? with pdflatex; use eps in DVI mode
+\usepackage{wrapfig}									% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{tabu}
+
+\title{Seminario-Practica RShiny}
+\author{Elena Villalobos}
+\date{1ro de Septiembre 2017}							% Activate to display a given date or no date
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+\maketitle
+
+\section{Lo que necesitas...}
+
+\begin{enumerate}
+ \item Paquetes: ('shiny') y ('rsconnect')
+ \item Dos archivos R en un sólo folder: server.R y ui.R
+ \item Cuenta en shinyapps.io
+\end{enumerate}
+
+\section{Archivos en R}
+
+Los archivos en R deben de tener exactamente el mismo nombre de server.R y ui.R (convención de RShiny, no mía). 
+
+\begin{itemize}
+ \item El archivo de ui.R debe de contener las siguientes líneas para comenzar:
+\end{itemize}
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+# Input
+fluidPage()
+
+@
+
+\begin{itemize}
+ \item Y el archivo de server.R debe de contener las siguientes líneas:
+\end{itemize}
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+
+# Output
+server <- function(input,output){}
+
+@
+
+El archivo de ui.R es donde se colocan los objetos estáticos y en el archivo de server.R los objetos que se actualizaran. 
+
+\subsection{Probemos ¡Hola Mundo!}
+
+Al archivo de ui.R agregaremos 'Hola mundo'. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+# Input
+fluidPage('Hola mundo')
+
+@
+
+En este punto, al momento de correr su app, se tuvo que haber abierto una ventana donde aparece ¡Hola mundo!
+
+\subsection{Slider!}
+
+A continuación pondremos una slider. Es importante mencionar que existen diferentes tipos de inputs, además del slider, como texto, botones, etc. Estos se pueden checar en la página de RShiny. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+# Input ui.R
+fluidPage(sliderInput(inputId= 'num', #identificacion de input
+                      label='Pon el numero que quieras', #etiqueta de slider
+                      value=25, #valor inicial
+                      min=1, #valor minimo
+                      max=100)) #valor maximo
+
+@
+
+Aquí deben de aparecer ya la slider en la ventana. 
+
+\subsection{Graficos!}
+
+Existen diferentes tipos de output como graficos, tablas, texto, etc. Todos se modifican dentro del archivo de server.R pero también se debe de mencionar en el archivo de ui.R que habrá un plot. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+# Input ui.R
+fluidPage(sliderInput(inputId= 'num',
+                      label='Pon el numero que quieras',
+                      value=25,
+                      min=1,
+                      max=100), 
+          plotOutput('grafico')) #mencion de que habra un grafico
+
+@
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+library('shiny')
+library('rsconnect')
+
+ 
+# Output server.R
+server <- function(input,output){
+ output$grafico <- renderPlot({ 
+  x <- c(0:10)
+  y <- x^2
+  plot(x,y)
+ })
+}
+
+@
+
+Importante notar que 'grafico' es igual en output\$grafico es igual a plotOutput('grafico'). Y render es la funcion que crea el tipo de output que en este caso es un plot. Todo lo que se ponde dentro de la función de render es el código para crear los plots.
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+server <- function(input,output){
+ output$grafico <- renderPlot({
+  x <- c(0:10)
+  y <- x^2
+  plot(x,y)
+ })
+}
+@
+
+
+En el código anterior tenemos un plot fijo, para hacer que este se mueva en función de los valores del slider se debe de agregar input\$num (notando que num es igual a inputId= "num") en el parámetro fijo que queremos modificar, y en este caso es el dos. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+server <- function(input,output){
+ output$grafico <- renderPlot({
+  x <- c(0:10)
+  y <- x^input$num #aqui sustituimos
+  plot(x,y)
+ })
+}
+@
+
+
+Ahora juega con los valores del slider para que se vean mejor los cambios. A mínimo = 0.01, máximo = 2, valor inicial = 2. Y fija los axes de tu plot para que se vea mejor el efecto. 
+
+
+\section{A compartir la app!!}
+R es lo que corre el código en tu computadora, shinyapps.io lo corre en internet. Para que se publica sólo corre la app y busca el botón de publicar y R lo hará por ti. Para esto ya tendrás que tener lista tu cuenta de shinyapps. 
+
+
+\section{La función de Reactive}
+Reactive es la función que hace que una misma variable se pueda usar en más de un plot. Ahora cambiaremos la variable x una variable reactive llamada datos. Nota: checa bien que se utilizan paréntesis y llaves para generar la variable. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+server <- function(input,output){
+ 
+  datos <- reactive({c(0:100)})
+  
+ output$grafico <- renderPlot({
+  y <- datos()^input$num
+  plot(datos(),y)
+ })
+} 
+@
+
+
+Ahora hagamos la variable 'y', también reactive. Y observa que para llamar esa variable se debe de poner el nombre y abrir y cerrar paréntesis. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+server <- function(input,output){
+ 
+  datos <- reactive({c(0:100)})
+  y <- reactive({datos()^input$num})
+  
+ output$grafico <- renderPlot({
+  plot(datos(),y())
+ })
+} 
+@
+
+Para ver la función de las variables reactive, hagamos un segundo plot con una segunda variable. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+server <- function(input,output){
+ 
+  datos <- reactive({c(0:100)})
+  y <- reactive({datos()^input$num})
+  y_2 <- reactive({y()*4}) #segunda variable
+  
+ output$grafico <- renderPlot({
+  layout(matrix(c(1,2),ncol=2))
+  
+  plot(datos(),y(),xlim=c(0,100),ylim=c(0,200))
+  plot(datos(),y_2(),xlim=c(0,100),ylim=c(0,200))
+  
+ })
+} 
+@
+
+Ahora, colocamos una segunda slider con diferente inputId, que será nuestro segundo parámetro. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(sliderInput(inputId= 'num', label='Parametro 1', 
+                      value=0.5, min=0.01, max=2), 
+          sliderInput(inputId= 'num2', label='Parametro 2',
+                      value=0.5, min=0.01,  max=2),
+           plotOutput('grafico')
+          )
+@
+
+Sustituimos el número 4 por input\$num2 y tendremos dos plots que se modifican uno en función del otro, y el otro en función de sí mismo.
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+server <- function(input,output){
+ 
+  datos <- reactive({c(0:100)})
+  y <- reactive({datos()^input$num})
+  y_2 <- reactive({y()*input$num2})
+  
+ output$grafico <- renderPlot({
+  layout(matrix(c(1,2),ncol=2))
+  
+  plot(datos(),y(),xlim=c(0,100),ylim=c(0,200))
+  plot(datos(),y_2(),xlim=c(0,100),ylim=c(0,200))
+  
+ })
+} 
+@
+
+\newpage
+\section{Pa' que se vea bonita su app un poco de HTML}
+
+HTML es un documento en el cual sólo se pone el texto que se verá en una página web. En HTML las principales funciones son:
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+# <h1> </h1> -----------  h1() h2() hasta h6() donde se colocan encabezados
+
+# <p> </p> -----------  p() parrafos 
+
+# <a> </a> -----------  a() a(href='http://www.git.com',Git) referencias (links)
+
+# 
+# strong(bold) em(empha) code(computer code) br(line break) hr(horizontal rule)
+
+#
+@
+
+Ahora modifiquemos de la siguiente manera: 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(h1('Mi primer Shiny app'), 
+          p('by Elena'),
+          a(href='https://shiny.rstudio.com/','Shiny'),
+          hr(),
+          sliderInput(inputId= 'num', label='Parametro 1', 
+                      value=0.5, min=0.01, max=2), 
+          sliderInput(inputId= 'num2', label='Parametro 2',
+                      value=0.5, min=0.01,  max=2),
+          plotOutput('grafico')
+)
+@
+
+
+
+
+
+\section{Posición de elementos}
+
+Para la posición de elementos se hace una fila que tiene longitud de 12 columnas.Intenta el siguiente código...
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(h1('Mi primer Shiny app'), 
+          p('by Elena'),
+          a(href='https://shiny.rstudio.com/','Shiny'),
+          hr(),
+          fluidRow(column(2),
+                   column(4,sliderInput(inputId= 'num', label='Parametro 1', 
+                      value=0.5, min=0.01, max=2)),
+                   column(4,sliderInput(inputId= 'num2', label='Parametro 2',
+                      value=0.5, min=0.01,  max=2))),
+          plotOutput('grafico')
+)
+@
+
+Con esto hay que checar siempre los paréntesis y las comas, el tipo de error común siempre tiene que ver con la mala colocación de esto. Y no olvidar ser ordenados en sus códigos!
+
+Con este código, las sliders se centraron. 
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(h1('Mi primer Shiny app'), 
+          p('by Elena'),
+          a(href='https://shiny.rstudio.com/','Shiny'),
+          hr(),
+          fluidRow(column(4,offset=2, 
+                          sliderInput(inputId= 'num',label='Parametro 1', 
+                                      value=0.5, min=0.01, max=2)),
+                   column(4,sliderInput(inputId= 'num2', label='Parametro 2',
+                                       value=0.5, min=0.01,  max=2))),
+          plotOutput('grafico')
+)
+@
+
+
+
+\section{Páneles}
+
+Para poner el fonde gris se utiliza wellPanel()
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(h1('Mi primer Shiny app'), 
+          p('by Elena'),
+          a(href='https://shiny.rstudio.com/','Shiny'),
+          hr(),
+          wellPanel(
+          fluidRow(column(4,offset=2, 
+                          sliderInput(inputId= 'num',label='Parametro 1', 
+                                      value=0.5, min=0.01, max=2)),
+                   column(4,sliderInput(inputId= 'num2', label='Parametro 2',
+                                       value=0.5, min=0.01,  max=2)))),
+          plotOutput('grafico')
+)
+@
+
+
+\section{Pestañas}
+
+Se pueden hacer diferentes tipos de pestañas, este es uno de ellos (tabsetPanel)
+
+<<echo=T, results='hide', warning=F, error=F, message= F>>=
+
+fluidPage(tabsetPanel(
+          tabPanel('simulador',
+          h1('Mi primer Shiny app'), 
+          p('by Elena'),
+          a(href='https://shiny.rstudio.com/','Shiny'),
+          hr(),
+          wellPanel(
+          fluidRow(
+           column(4,offset=2,sliderInput(inputId= 'num', label='Parametro 1', 
+                      value=0.5, min=0.01, max=2)),
+           column(4,sliderInput(inputId= 'num2', label='Parametro 2',
+                      value=0.5, min=0.01,  max=2)))),
+          plotOutput('grafico')),
+          tabPanel('instucciones',
+                   br(),
+                   h1('Instrucciones de como usar el simulador'),
+                   hr(),
+                   p('Aqui se pueden poner las instucciones de todo'))
+))
+@
+
+
+Y así terminaron de hacer su primer shiny app.
+
+Saludos!
+
+
+
+
+\end{document}
