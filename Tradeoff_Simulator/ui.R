@@ -20,15 +20,17 @@ fluidPage(title='Trade-off Model',
    column(3,
  wellPanel(
           sliderInput(inputId= "tau",label = p("Weight function (", em('\u03C4'), ')') ,
-                      value = 0.001, min=0.001,max=5,sep=0.01),
+                      value = 0.03, min=0.01,max=2,sep=0.001),
           sliderInput(inputId= "gamma",label = p("Value Function (", em('\u03B3'), ')') ,
-                      value = 0.03,min=0.001,max=5,sep=0.01),
+                      value = 0.03,min=0.01,max=2,sep=0.001),
           sliderInput(inputId= "kappa",label = p("Tradeoff function (", em('\u03BA'), ')') ,
-                      value = 2.5,min=0.01,max=5,sep=0.01),
+                      value = 1.05,min=0.01,max=2,sep=0.001),
           sliderInput(inputId= "vartheta",label = p("Tradeoff function/Superadditivity (", em('\u03D1'), ')') ,
-                      value = 2.5, min=1.01, max=10,sep=0.01),
+                      value = 1.15, min=1.01, max=2,sep=0.001),
           sliderInput( inputId= "alpha",label = p("Tradeoff function/Subadditivity (", em('\u03B1'), ')') ,
-                       value = 5,min=0.01,max=10,sep=0.01))),
+                       value = 0.05,min=0.01,max=2,sep=0.001),
+          sliderInput( inputId= "epsilon",label = p("Noise (", em('\u03B5'), ')') ,
+                       value = 0.05,min=0.01,max=2,sep=0.001))),
    column(8,  plotOutput("ploti",width = "900px",height="600px")))),
  tabPanel(title='Instructions',
           titlePanel('Instructions for the Trade-off Simulator'),
@@ -108,9 +110,10 @@ fluidPage(title='Trade-off Model',
            column(1),
            column(3,p(em('\u03BA'), '= Time sensitivity;'),
                     p(em('\u03D1'), '= Superadditivity;'),
-                    p(em('\u03B1'), '= Subadditivity.'))),
+                    p(em('\u03B1'), '= Subadditivity.'),
+                    p(em('\u03B5'), '= Noise.'))),   
   fluidRow(column(2),column(4,withMathJax('Probability assigment for the larger later alternative:
-                                 $$P(ll)=\\frac{A(x_s,x_l)}{A(x_s,x_l)-Q(t_s,t_l)}$$')))
+                                 $$P(ll)=\\frac{A(x_s,x_l)^{(1/\\epsilon)}}{A(x_s,x_l)^{(1/\\epsilon)}+Q(t_s,t_l)^{(1/\\epsilon)}}$$')))
 
   ))))
 
