@@ -3,7 +3,7 @@
 fluidPage(
  tabsetPanel(
   tabPanel('Gráficos',
-           h1('Modelos en Descuento Temporal',style="color: #6F6F6F"),
+           h1('Modelos de Utilidad',style="color: #6F6F6F"),
            h5('Por Elena Villalobos',style="color: #6F6F6F"),
            hr(),
            plotOutput('grafico'),
@@ -26,15 +26,20 @@ fluidPage(
                            )
            ),
   tabPanel('Instrucciones',
-           h1('Modelos en Descuento Temporal',style="color: #6F6F6F"),
+           h1('Modelos de Utilidad',style="color: #6F6F6F"),
            h5('Por Elena Villalobos',style="color: #6F6F6F"),
            hr(),
-           p('En descuento temporal existen tres principales funciones que describen
-             el descuento del valor subjetivo. '),
+           p('La utilidad es... '),
            tags$ol(
-            tags$li('Exponencial',withMathJax('$$V=A\\cdot e ^ {-\\beta\\cdot t}$$')),
-            tags$li('Hiperbólica',withMathJax('$$V=\\frac{A}{1+\\kappa \\cdot t}$$')),
-            tags$li('Hiperboloide',withMathJax('$$V=\\frac{A}{1+\\tau \\cdot t ^ {-\\beta / \\tau}}$$'))
+            tags$li('Utilidad Esperada',withMathJax('$$V(x,p) = p\\cdot x $$')),
+            tags$li('Utilidad de Teoría del prospecto',withMathJax('$$V(x,p)= w(p)\\cdot v(x)$$')),
+            tags$li('Valor relativo',withMathJax('$$v(x)= \\Bigg \\{ \\begin{matrix} 
+                                                 x^\\alpha \\; for \\; x \\ge 0 
+                                                 \\\\
+                                                 -\\lambda(-x)^\\beta \\; for \\; x < 0
+                                                 \\end{matrix} $$')),
+            tags$li('Peso de decision',withMathJax('$$w(p)=\\frac{\\delta \\cdot p^\\gamma}{\\delta \\cdot p^\\gamma + (1-p)^\\gamma}$$'))
+       
             )
            )
   )

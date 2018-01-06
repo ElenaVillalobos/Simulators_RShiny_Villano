@@ -2,9 +2,9 @@ name: IntertemporalChoice_Simulator
 title: IntertemporalChoice_Simulator
 account: villanoele
 server: shinyapps.io
-appId: 209990
-bundleId: 963891
+appId: 254219
+bundleId: 1163997
 url: https://villanoele.shinyapps.io/IntertemporalChoice_Simulator/
-when: 1504288423.6771
+when: 1515191425.5034
 asMultiple: FALSE
 asStatic: FALSE
